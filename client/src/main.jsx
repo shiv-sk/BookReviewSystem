@@ -8,6 +8,10 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import NewBook from './pages/NewBooks.jsx';
 import BookDetail from './pages/BookDetail.jsx';
+import { AuthProvider } from './context/UserContext.jsx';
+import { BookProvider } from './context/BookContrxt.jsx';
+import { ReviewProvider } from './context/ReviewContext.jsx';
+import Exp from './pages/Exp.jsx';
 const router = createBrowserRouter([
   {
     path:"/",
@@ -26,12 +30,16 @@ const router = createBrowserRouter([
         element:<Register/>
       },
       {
-        path:"newBook",
+        path:"book/new",
         element:<NewBook/>
       },
       {
         path:"book/:bookId",
         element:<BookDetail/>
+      },
+      {
+        path:"book/exp",
+        element:<Exp/>
       },
     ]
   }
@@ -39,8 +47,14 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}>
-    <App />
-    </RouterProvider>
+    <AuthProvider>
+      <BookProvider>
+        <ReviewProvider>   
+        <RouterProvider router={router}>
+        <App />
+        </RouterProvider>
+        </ReviewProvider> 
+      </BookProvider>
+    </AuthProvider>
   </StrictMode>,
 )
