@@ -18,7 +18,7 @@ const fileFilter = function(req , file , cb){
     if(extension && mimeType){
         return cb(null , true);
     }else{
-        return cb(new Error("Only image files (JPEG, PNG, GIF, WEBP) are allowed!"));
+        return cb(new Error("Only image files (JPEG, PNG, GIF, WEBP , jpg) are allowed!"));
     }
 }
 
