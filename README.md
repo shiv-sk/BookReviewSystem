@@ -81,7 +81,7 @@ BookReviewSystem/
 - Update the .env file with your environment variables.
 
 ### Media Upload(Book's Image)
-cloudinary is used for handling upload of book's cover image follow the cloudinary [- link] official documentation to know more about cloudinary(easy to use). 
+Cloudinary is used for handling the upload of book cover images. Follow these steps to integrate Cloudinary into your project:
 
 - **Sign Up for Cloudinary**: Create a free account at [Cloudinary](https://cloudinary.com/).
 - **Install Cloudinary SDK**: Run `npm install cloudinary`.
