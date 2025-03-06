@@ -138,7 +138,7 @@ exports.updateUser = asyncHandler(async (req,res)=>{
         throw new ApiError(500 , "user is not updated");
     }
     return res.status(200).json(
-        new ApiResponse("updated user is" , user)
+        new ApiResponse("updated user is" , updatedUser)
     )
 })
 

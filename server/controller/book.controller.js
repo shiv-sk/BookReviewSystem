@@ -2,6 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/apiError");
 const ApiResponse = require("../utils/apiResponse");
 const Book = require("../models/book.model");
+const uploadOnCloudinary = require("../utils/cloudinary");
 
 //new Book
 exports.newBook = asyncHandler(async(req , res)=>{
@@ -14,13 +15,17 @@ exports.newBook = asyncHandler(async(req , res)=>{
     if(!coverImagePath){
         throw new ApiError(500 , "coverImage Path is not found! ")
     }
+    const uploadToCloudinary = await uploadOnCloudinary(coverImagePath);
+    if(!uploadToCloudinary){
+        throw new ApiError(500 , "uploadToCloudinary is not working! ")
+    }
     const book = await Book.create({
         title,
         description,
         author,
         publishedYear,
         genre,
-        coverImage:coverImagePath,
+        coverImage:uploadToCloudinary,
     })
     if(!book){
         throw new ApiError(500 , "new Book is not created! ");
@@ -49,6 +54,28 @@ exports.getAllBooks = asyncHandler(async (req,res)=>{
     }
     return res.status(200).json(
         new ApiResponse("books are" , books)
+    )
+})
+
+//get Popular books
+exports.getPopularBooks = asyncHandler(async (req,res)=>{
+    const books = await Book.find().sort({ averageRating: -1 }).limit(5);
+    if(books.length === 0){
+        throw new ApiError(404 , "books are not found");
+    }
+    return res.status(200).json(
+        new ApiResponse("PopularBooks are" , books)
+    )
+})
+
+//get newly Added books
+exports.getNewlyAddedBooks = asyncHandler(async (req,res)=>{
+    const books = await Book.find().sort({ createdAt: -1 }).limit(5);
+    if(books.length === 0){
+        throw new ApiError(404 , "books are not found");
+    }
+    return res.status(200).json(
+        new ApiResponse("NewlyAddedBooks are" , books)
     )
 })
 
@@ -87,3 +114,44 @@ exports.deleteBook = asyncHandler(async (req,res)=>{
         new ApiResponse("book is deleted")
     )
 })
+
+
+//filter by genre
+exports.getBooksByGenre = asyncHandler(async (req,res)=>{
+    const {genre} = req.query;
+    const books = await Book.find({genre});
+    if(books.length === 0){
+        throw new ApiError(404 , "books are not found");
+    }
+    return res.status(200).json(
+        new ApiResponse("books are" , books)
+    )
+})
+//exp books
+exports.expBooks = async (req, res) => {
+    try {
+      const { search, page = 1, limit = 5 } = req.query;
+      const query = {};
+  
+      if (search) {
+        query.$or = [
+          { title: { $regex: search, $options: "i" } },
+          { author: { $regex: search, $options: "i" } }
+        ];
+      }
+  
+      const books = await Book.find(query)
+        .skip((page - 1) * limit) // Skips previous pages
+        .limit(parseInt(limit)); // Limits the result per page
+  
+      const totalBooks = await Book.countDocuments(query);
+  
+      res.status(200).json({
+        books,
+        totalPages: Math.ceil(totalBooks / limit),
+        currentPage: parseInt(page)
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Something went wrong!" });
+    }
+  };

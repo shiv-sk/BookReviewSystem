@@ -36,6 +36,10 @@ const bookSchema = new mongoose.Schema({
         required:true,
         index:true,
     },
+    averageRating:{
+        type:Number,
+        default: 0,
+    }
 } , {timestamps:true});
 
 const Book = mongoose.model("Book" , bookSchema);

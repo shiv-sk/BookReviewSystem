@@ -104,17 +104,18 @@ export default function NewBook(){
                     onChange={handleOnChnage} 
                     required
                     />
-                    <label htmlFor="description" className="text-sm font-medium mb-1">Book Description</label>
+                    <label htmlFor="description" className="text-sm font-medium mb-1">Book Description(1000 chars only)</label>
                     <textarea 
                     className="textarea w-full"
                     name="description"
                     id="description" 
                     rows={3} 
-                    placeholder="Enter a brief description of the book..."
+                    placeholder="Enter a brief description of the book(1000 chars)..."
                     value={bookData.description}
+                    maxLength={1000}
                     onChange={handleOnChnage}
                     ></textarea>
-                    <label htmlFor="file" className="text-sm font-medium mb-1">Upload Cover Image</label>
+                    <label htmlFor="file" className="text-sm font-medium mb-1">Only JPEG, PNG, GIF, WEBP , jpg-Max 5Mb</label>
                     <input
                     name="coverImage" 
                     type="file" 

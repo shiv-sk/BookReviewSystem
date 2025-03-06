@@ -7,7 +7,8 @@ const storage = multer.diskStorage({
         cb(null, './temp/coverImages');
     },
     filename:function(req , file , cb){
-        cb(null , file.fieldname + Date.now());
+        const extension = path.extname(file.originalname);
+        cb(null , file.fieldname + Date.now() + extension);
     }
 })
 

@@ -7,7 +7,8 @@ const AuthContext = createContext({
     loginUser:()=>{},
     logoutUser:()=>{},
     currentUser:()=>{},
-    editUser:()=>{}
+    editUser:()=>{},
+    getUser:()=>{},
 })
 const useAuth = ()=>useContext(AuthContext);
 const AuthProvider = ({children})=>{
@@ -20,7 +21,7 @@ const AuthProvider = ({children})=>{
             try {
                 setIsLoading(true);
                 const response = await getAndDeleteReq(`${baseUrl}/user/me` , "get");
-                console.log("response from AuthContext! " , response?.data);
+                // console.log("response from AuthContext! " , response?.data);
                 setUser(response?.data);
                 return { success: true, data: response?.data };
             } catch (error) {
@@ -38,7 +39,7 @@ const AuthProvider = ({children})=>{
         try {
             setIsLoading(true);
             const response = await postAndPatchReq(`${baseUrl}/user/register` , "post" , data);
-            console.log("the response AuhtContext! " , response);
+            // console.log("the response AuhtContext! " , response);
             setUser(response?.data);
             return { success: true, data: response?.data };
         } catch (error) {
@@ -54,7 +55,7 @@ const AuthProvider = ({children})=>{
         try {
             setIsLoading(true);
             const response = await postAndPatchReq(`${baseUrl}/user/login` , "post" , data);
-            console.log("response from AuthContext! " , response?.data);
+            // console.log("response from AuthContext! " , response?.data);
             setUser(response?.data);
             return { success: true, data: response?.data };
         } catch (error) {
@@ -70,7 +71,7 @@ const AuthProvider = ({children})=>{
         try {
             setIsLoading(true);
             const response = await getAndDeleteReq(`${baseUrl}/user/logout` , "get");
-            console.log("response from AuthContext! " , response?.data);
+            // console.log("response from AuthContext! " , response?.data);
             setUser(null);
             return { success: true, data: response?.data };
         } catch (error) {
@@ -82,9 +83,40 @@ const AuthProvider = ({children})=>{
             setIsLoading(false);
         }
     }
-    const editUser = async()=>{}
+    const editUser = async(data , userId)=>{
+        try {
+            setIsLoading(true);
+            const response = await postAndPatchReq(`${baseUrl}/user/${userId}` , "patch" , data);
+            // console.log("response from AuthContext! " , response?.data);
+            setUser(response?.data);
+            return { success: true, data: response?.data };
+        } catch (error) {
+            console.log("error from AuthContext! " , error);
+            const errorMessage = error.response?.data?.message || "login failed. Please try again.";
+            setError(errorMessage);
+            return { success: false, error: errorMessage || "login failed." };
+        }finally{
+            setIsLoading(false);
+        }
+    }
+    const getUser = async(userId)=>{
+        try {
+            setIsLoading(true);
+            const response = await postAndPatchReq(`${baseUrl}/user/${userId}` , "get");
+            // console.log("response from AuthContext! " , response?.data);
+            setUser(response?.data);
+            return { success: true, data: response?.data };
+        } catch (error) {
+            console.log("error from AuthContext! " , error);
+            const errorMessage = error.response?.data?.message || "login failed. Please try again.";
+            setError(errorMessage);
+            return { success: false, error: errorMessage || "login failed." };
+        }finally{
+            setIsLoading(false);
+        }
+    }
     return(
-        <AuthContext.Provider value={{user , registerUser , loginUser , logoutUser , editUser , error , isLoading}}>
+        <AuthContext.Provider value={{user , registerUser , loginUser , logoutUser , editUser ,  getUser , error , isLoading}}>
             {children}
         </AuthContext.Provider>
     )

@@ -2,6 +2,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/apiError");
 const ApiResponse = require("../utils/apiResponse");
 const Review = require("../models/review.model");
+const Book = require("../models/book.model");
 
 //new Review
 exports.newReview = asyncHandler(async(req , res)=>{
@@ -21,6 +22,16 @@ exports.newReview = asyncHandler(async(req , res)=>{
     })
     if(!review){
         throw new ApiError(500 , "new review is not created! ");
+    }
+    const reviews = await Review.find({ book: bookId });
+    let totalRating = 0;
+    reviews.forEach((review)=>{
+        totalRating += review.rating;
+    })
+    const averageRating = totalRating / reviews.length;
+    const updateBook = await Book.findByIdAndUpdate(bookId , { averageRating }, { new: true });
+    if(!updateBook){
+        throw new ApiError(500, "Failed to update book's average rating");
     }
     return res.status(201).json(
         new ApiResponse("new created review is! " , review , 201)
